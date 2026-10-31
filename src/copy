@@ -1,0 +1,76 @@
+❌ 摄像头1 推流管道创建失败: gst_parse_error: no property "drop" in element "appsrc" (2)
+
+⚠️ 摄像头1 推流帧发送失败: rga resize status=-1
+发现告警目标！！！
+ℹ️ 当前ROI无有效识别文字（经过过滤）
+⚠️ 摄像头1 推流帧发送失败: rga resize status=-1
+
+root@RK3576-Tronlong:/home/Tronlong/Desktop/mediamtx# ./mediamtx
+2026/05/20 17:22:06 INF MediaMTX v1.17.0, linux, arm64
+2026/05/20 17:22:06 INF configuration loaded from /home/Tronlong/Desktop/mediamtx/mediamtx.yml
+2026/05/20 17:22:06 INF [RTSP] listener opened on :8554 (TCP/RTSP), :8000 (UDP/RTP), :8001 (UDP/RTCP)
+2026/05/20 17:22:06 INF [RTMP] listener opened on :1935
+2026/05/20 17:22:06 INF [HLS] listener opened on :8888
+2026/05/20 17:22:06 INF [WebRTC] listener opened on :8889 (HTTP), :8189 (ICE/UDP)
+2026/05/20 17:22:06 INF [SRT] listener opened on :8890 (UDP)
+
+
+OpenCV GStreamer support: True
+📝 摄像头1 管道:
+appsrc name=src is-live=true do-timestamp=true format=GST_FORMAT_TIME caps="video/x-raw,format=BGR,width=640,height=480,framerate=20/1" ! queue max-size-time=0 max-size-buffers=1 leaky=downstream ! vi...
+❌ 摄像头1 推流管道失败: gst_parse_error: no property "rect-num" in element "mpph264enc" (2)
+Traceback (most recent call last):
+  File "/home/Tronlong/Desktop/pipeline/src/13_rga_rtmp_data_saved.py", line 2189, in __init__
+    self.pipeline = Gst.parse_launch(pipeline_str)
+gi.repository.GLib.GError: gst_parse_error: no property "rect-num" in element "mpph264enc" (2)
+
+
+📝 摄像头1 管道:
+appsrc name=src is-live=true do-timestamp=true format=GST_FORMAT_TIME caps="video/x-raw,format=BGR,width=640,height=480,framerate=20/1" ! videoconvert ! video/x-raw,format=NV12 ! mpph264enc name=enc ! h264parse config-interval=-1 ! flvmux streamable=true name=mux ! rtmpsink name=sink sync=false
+✅ 推流地址: rtmp://192.168.1.100:1935/camera_1
+
+
+2026/05/20 19:08:41 INF [RTMP] [conn 192.168.1.33:64372] closed: write tcp 192.168.1.100:1935->192.168.1.33:64372: write: connection reset by peer
+2026/05/20 19:08:44 INF [RTMP] [conn 127.0.0.1:52488] closed: EOF
+2026/05/20 19:11:26 INF [RTMP] [conn 192.168.1.33:64400] opened
+2026/05/20 19:11:26 INF [RTMP] [conn 192.168.1.33:64400] closed: no stream is available on path 'camera_1'
+
+
+[ WARN:0] global ./modules/videoio/src/cap_gstreamer.cpp (2075) handleMessage OpenCV | GStreamer warning: Embedded video playback halted; module rtmpsink0 reported: 无法写入资源。
+[ WARN:0] global ./modules/videoio/src/cap_gstreamer.cpp (1967) writeFrame OpenCV
+
+2026/05/20 19:49:59 INF [RTMP] [conn 192.168.1.100:56412] opened
+2026/05/20 19:50:09 INF [RTMP] [conn 192.168.1.100:56412] closed: read tcp 192.168.1.100:1935->192.168.1.100:56412: i/o timeout
+2026/05/20 19:50:12 INF [RTMP] [conn 192.168.1.33:64722] opened
+2026/05/20 19:50:12 INF [RTMP] [conn 192.168.1.33:64722] closed: no stream is available on path 'camera_1'
+
+
+
+
+
+
+
+ RgaBlit(1513) RGA_BLIT fail: 无效的参数
+ RgaBlit(1514) RGA_BLIT fail: 无效的参数
+handl-fd-vir-phy-hnd-format[0, 0, 0x7ed7ed5150, (nil), 0, 0]
+rect[0, 0, 640, 480, 1920, 480, 1792, 0]
+f-blend-size-rotation-col-log-mmu[0, 0, 0, 0, 0, 0, 1]
+handl-fd-vir-phy-hnd-format[0, 0, 0x7ecc000040, (nil), 0, 0]
+rect[0, 0, 640, 480, 640, 480, 2560, 0]
+f-blend-size-rotation-col-log-mmu[0, 0, 0, 0, 0, 0, 1]
+20298 2586968 2586907 E im2d_rga_impl: Failed to call RockChipRga interface, please use 'dmesg' command to view driver error log.
+20298 2586968 2586907 E   librga: job_handle[0], aquire_fence[-1(0xffffffff)], release_fence_ptr[(nil)]
+20298 2586968 2586907 E   librga: ----------+------------------+----------------------------+----------------------------+-------------------------+----------------------------------------------------------------+----------------------------+--------------
+20298 2586968 2586907 E   librga:  Channel  |    Store Mode    |       Rect[x,y,w,h]        |   Image Info[w,h,ws,hs]    |         Format          |     Handle,         Fd,          Virt Addr,          Phys Addr |        Color Space         | Global Alpha 
+20298 2586968 2586907 E   librga: ----------+------------------+----------------------------+----------------------------+-------------------------+----------------------------------------------------------------+----------------------------+--------------
+20298 2586968 2586907 E   librga:       src |     raster( 0x1) |     0,     0,     0,     0 |   640,   480,  1920,   480 |            bgr888(0x700) |          0,          0,       0x7ed7ed5150,                  0 |              default(   0) |         0xff 
+20298 2586968 2586907 E   librga:       dst |     raster( 0x1) |     0,     0,     0,     0 |   640,   480,   640,   480 |              nv12(0xa00) |          0,          0,       0x7ecc000040,                  0 |              default(   0) |         0xff 
+20298 2586968 2586907 E   librga: ----------+------------------+----------------------------+----------------------------+-------------------------+----------------------------------------------------------------+----------------------------+--------------
+20299 2586968 2586907 E   librga: usage[0x80000]
+20299 2586968 2586907 E   librga: option:
+20299 2586968 2586907 E   librga: 	api_version[0x0]
+20299 2586968 2586907 E   librga: 	set_core[0x0], priority[0]
+20299 2586968 2586907 E   librga: 	job_mode[sync]
+20299 2586968 2586907 E   librga: 		scale[r,g,b] = [0, 0, 0], offset[r,g,b] = [0x0, 0x0, 0x0]
+20299 2586968 2586907 E   librga: 		flags[0x0], read_threshold[0x0], write_start[0x0], write_step[0x0]
+⚠️ RGA 转换失败，回退到 CPU: rga cvtcolor status=0

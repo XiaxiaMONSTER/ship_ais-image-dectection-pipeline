@@ -1,0 +1,84 @@
+[2026-05-26 17:50:40]
+--- PERF [100 iters | 41478.4 fps] ---
+       capture:    2.9ms avg
+      classify:    4.7ms avg
+        detect:   74.7ms avg
+       display:   79.6ms avg
+          draw:    1.5ms avg
+           ocr:  119.7ms avg
+      postproc:    0.0ms avg
+     rtmp_push:    0.1ms avg
+     stabilize:    0.0ms avg
+
+[2026-05-26 17:51:07]
+--- PERF [200 iters | 32147.2 fps] ---
+       capture:    2.9ms avg
+      classify:    4.5ms avg
+        detect:   73.6ms avg
+       display:   75.0ms avg
+          draw:    1.5ms avg
+           ocr:  120.1ms avg
+      postproc:    0.0ms avg
+     rtmp_push:    0.1ms avg
+     stabilize:    0.0ms avg
+
+[2026-05-26 17:51:35]
+--- PERF [300 iters | 26418.5 fps] ---
+       capture:    2.8ms avg
+      classify:    4.3ms avg
+        detect:   72.9ms avg
+       display:   70.7ms avg
+          draw:    1.6ms avg
+           ocr:  122.4ms avg
+      postproc:    0.0ms avg
+     rtmp_push:    0.1ms avg
+     stabilize:    0.0ms avg
+
+[2026-05-26 17:52:02]
+--- PERF [400 iters | 27685.2 fps] ---
+       capture:    2.8ms avg
+      classify:    4.4ms avg
+        detect:   72.5ms avg
+       display:   71.7ms avg
+          draw:    1.7ms avg
+           ocr:  123.2ms avg
+      postproc:    0.0ms avg
+     rtmp_push:    0.1ms avg
+     stabilize:    0.0ms avg
+
+[2026-05-26 17:52:30]
+--- PERF [500 iters | 27777.6 fps] ---
+       capture:    2.9ms avg
+      classify:    4.8ms avg
+        detect:   73.0ms avg
+       display:   72.9ms avg
+          draw:    1.7ms avg
+           ocr:  121.6ms avg
+      postproc:    0.0ms avg
+     rtmp_push:    0.1ms avg
+     stabilize:    0.0ms avg
+
+[2026-05-26 17:52:58]
+--- PERF [600 iters | 30037.2 fps] ---
+       capture:    2.9ms avg
+      classify:    4.6ms avg
+        detect:   75.0ms avg
+       display:   72.5ms avg
+          draw:    1.6ms avg
+           ocr:  123.6ms avg
+      postproc:    0.0ms avg
+     rtmp_push:    0.1ms avg
+     stabilize:    0.0ms avg
+
+[2026-05-26 17:53:25]
+--- PERF [700 iters | 33136.3 fps] ---
+       capture:    2.8ms avg
+      classify:    4.2ms avg
+        detect:   74.3ms avg
+       display:   70.5ms avg
+          draw:    1.5ms avg
+           ocr:  123.2ms avg
+      postproc:    0.0ms avg
+     rtmp_push:    0.1ms avg
+     stabilize:    0.0ms avg
+

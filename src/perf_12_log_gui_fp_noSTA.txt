@@ -1,0 +1,72 @@
+[2026-05-18 19:00:29]
+--- PERF [100 iters | 44463.5 fps] ---
+       capture:    2.8ms avg
+      classify:    4.1ms avg
+        detect:  109.7ms avg
+       display:   67.6ms avg
+          draw:   92.0ms avg
+           ocr:  121.8ms avg
+      postproc:    0.0ms avg
+     rtmp_push:    0.0ms avg
+     stabilize:    0.3ms avg
+
+[2026-05-18 19:01:09]
+--- PERF [200 iters | 37959.6 fps] ---
+       capture:    2.9ms avg
+      classify:    4.2ms avg
+        detect:  111.2ms avg
+       display:   66.4ms avg
+          draw:   91.0ms avg
+           ocr:  122.5ms avg
+      postproc:    0.0ms avg
+     rtmp_push:    0.0ms avg
+     stabilize:    0.4ms avg
+
+[2026-05-18 19:01:48]
+--- PERF [300 iters | 31182.5 fps] ---
+       capture:    2.8ms avg
+      classify:    4.1ms avg
+        detect:  110.4ms avg
+       display:   64.7ms avg
+          draw:   89.7ms avg
+           ocr:  123.1ms avg
+      postproc:    0.0ms avg
+     rtmp_push:    0.0ms avg
+     stabilize:    0.4ms avg
+
+[2026-05-18 19:02:27]
+--- PERF [400 iters | 30681.5 fps] ---
+       capture:    2.7ms avg
+      classify:    4.0ms avg
+        detect:  108.2ms avg
+       display:   64.0ms avg
+          draw:   90.1ms avg
+           ocr:  121.4ms avg
+      postproc:    0.0ms avg
+     rtmp_push:    0.0ms avg
+     stabilize:    0.3ms avg
+
+[2026-05-18 19:03:06]
+--- PERF [500 iters | 31439.6 fps] ---
+       capture:    2.7ms avg
+      classify:    4.0ms avg
+        detect:  107.5ms avg
+       display:   63.4ms avg
+          draw:   89.5ms avg
+           ocr:  120.2ms avg
+      postproc:    0.1ms avg
+     rtmp_push:    0.0ms avg
+     stabilize:    0.3ms avg
+
+[2026-05-18 19:03:45]
+--- PERF [600 iters | 31717.6 fps] ---
+       capture:    2.7ms avg
+      classify:    4.3ms avg
+        detect:  107.9ms avg
+       display:   63.8ms avg
+          draw:   90.1ms avg
+           ocr:  121.3ms avg
+      postproc:    0.1ms avg
+     rtmp_push:    0.0ms avg
+     stabilize:    0.2ms avg
+

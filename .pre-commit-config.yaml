@@ -1,0 +1,6 @@
+repos:
+  - repo: https://github.com/vainuio/git-lfs-autotrack
+    rev: v0.1.0
+    hooks:
+      - id: git-lfs-autotrack
+        args: ["--max-bytes=10485760"]  # 20 MiB，超过此大小自动转为 LFS
