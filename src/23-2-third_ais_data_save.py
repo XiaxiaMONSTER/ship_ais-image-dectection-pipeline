@@ -5,7 +5,7 @@
 
 2026-10-26 修改：白天船长10m，面积告警阈值为原版2/3，检测置信度0.5；
 按检测框宽高同比缩小假设补偿测距，使新面积阈值对应原阈值的距离；
-AIS保留100/150/200m三级告警；仅AIS触发录像限制为距离<=50m。
+AIS保留100/150/200m三级告警；仅AIS触发录像限制为距离<=200m。
 待发送带框视频和本地无框归档视频统一输出1280x720。
 
 2026-10-10 修改：全景600秒保存，媒体1800秒发送，告警另行立即唤醒；
@@ -1849,6 +1849,8 @@ LOCAL_WEBP_QUALITY = 85     # 本地告警图像、录像帧和轨迹图 WebP �
 # 视频合成参数
 VIDEO_FPS = 10  # 视频帧率
 VIDEO_OUTPUT_SIZE = (1280, 720)  # 保存视频的固定分辨率（宽、高），发送和本地归档共用
+# 896×504 # 640×360 # 1280×720 # 1920×1080
+
 # OpenCV H.265 候选：GStreamer MPP 失败后依次尝试；不回退到 H.264/mp4v。
 VIDEO_CODEC_CANDIDATES = (
     ('H265', cv2.VideoWriter_fourcc(*'H265')),
@@ -1905,12 +1907,14 @@ AIS_SERIAL_STOPBITS = 1
 AIS_NETWORK_HOST = '192.168.1.10'      # 网络数据源主机
 AIS_NETWORK_PORT = 8001                # 网络数据源端口
 AIS_INPUT_FILE = '2点_ais.txt'          # FILE模式下的输入文件名（位于项目根目录）
-AIS_BUOY_LAT = 36.333056  		# 浮标（本船/观测点）纬度
-AIS_BUOY_LON = 120.716111 		# 浮标（本船/观测点）经度
+#AIS_BUOY_LAT = 36.333056  		# B栋天台纬度
+#AIS_BUOY_LON = 120.716111 		# B栋天台经度
+AIS_BUOY_LAT = 36.329167        # 栈桥边纬度
+AIS_BUOY_LON = 120.714167        # 栈桥边经度
 GPS_ENABLE = True  # 从同一 RS232 接收主控转发的 POSITION/RMC/GGA/GLL
 GPS_TIMEOUT = 30.0  # 兼容参数；最后一次有效 GPS 坐标不再因超时失效
 GPS_LAST_POSITION_FILE = "/root/Desktop/pipeline/.last_gps_position.json"
-GPS_PERSIST_INTERVAL = 5.0  # 内存每报实时更新；文件最多每5秒写一次，降低eMMC磨损
+GPS_PERSIST_INTERVAL = 5.0       # 内存每报实时更新；文件最多每5秒写一次，降低eMMC磨损
 GPS_RX_DEBUG = True                    # GPS信息检查
 GPS_RX_DEBUG_INTERVAL = 5.0
 # 导入模块时不读写文件；主程序解析命令行参数后再启用持久化。
@@ -1922,7 +1926,7 @@ def get_buoy_position():
 
 
 AIS_WARNING_DISTANCE = 200.0           # AIS三级告警范围（米），保留一级100m、二级150m
-AIS_RECORD_DISTANCE = 50.0             # AIS触发录像距离（米），与告警分级独立
+AIS_RECORD_DISTANCE = 200.0             # AIS触发录像距离（米），与告警分级独立
 AIS_TRAJECTORY_ENABLE = False           # AIS 轨迹图独立开关，默认关闭以降低 CPU 和存储占用
 AIS_MAX_PLOT_DISTANCE = 500.0          # 轨迹图最大绘制距离（米），只绘制此范围内的记录，防止远船把警戒圈缩得太小
 AIS_ALARM_COOLDOWN = 300               # AIS 同一船只告警冷却时间（秒），5分钟内不重复报
@@ -3901,9 +3905,9 @@ def process_ship_ocr(frame, post_results, weather_label, camera_id):
                 roi_filename = generate_roi_filename(camera_id, x1, y1, x2, y2)
                 save_path = os.path.join(camera_dir, roi_filename)
                 _save_webp_image(ship_roi, save_path, ROI_QUALITY)
-                print(f"✅ 保存ROI图片：{save_path}")
+                print(f"[摄像头{camera_id}] ✅ 保存ROI图片：{save_path}")
             except Exception as e:
-                print(f"⚠️ 保存ROI图片失败：{str(e)}")
+                print(f"[摄像头{camera_id}] ⚠️ 保存ROI图片失败：{str(e)}")
         
         # OCR推理（在干净的ROI上）
         rec_texts, rec_scores, rec_polys = [], [], []  # 每个ROI独立，避免空返回复用上次结果
@@ -3921,14 +3925,14 @@ def process_ship_ocr(frame, post_results, weather_label, camera_id):
                     # print(f"对应置信度: {rec_scores}")
         
         except Exception as e:
-            print(f"⚠️ OCR推理异常（ROI区域）：{str(e)}")
+            print(f"[摄像头{camera_id}] ⚠️ OCR推理异常（ROI区域）：{str(e)}")
             continue
         
         if len(rec_texts) == 0:
             # print(f"ℹ️ 当前ROI无有效识别文字（x1:{x1},y1:{y1},x2:{x2},y2:{y2}）")
             continue
         elif len(rec_texts) != len(rec_scores) or len(rec_texts) != len(rec_polys):
-            print(f"⚠️ OCR结果字段长度不匹配：文本数={len(rec_texts)}, 置信度数={len(rec_scores)}, 坐标数={len(rec_polys)}")
+            print(f"[摄像头{camera_id}] ⚠️ OCR结果字段长度不匹配：文本数={len(rec_texts)}, 置信度数={len(rec_scores)}, 坐标数={len(rec_polys)}")
             continue
         
         # 水印先于置信度排序过滤，避免水印压过真实船号。
@@ -3961,7 +3965,7 @@ def process_ship_ocr(frame, post_results, weather_label, camera_id):
                 best_poly = poly
         
         if best_text:
-            print(f"✅ 选择最佳识别结果: '{best_text}' (置信度: {best_score:.3f})")
+            print(f"[摄像头{camera_id}] ✅ 选择最佳识别结果: '{best_text}' (置信度: {best_score:.3f})")
             
             # 计算OCR文本在原图上的坐标
             try:
@@ -3990,7 +3994,7 @@ def process_ship_ocr(frame, post_results, weather_label, camera_id):
                     text_y2 = y2
                     
             except Exception as e:
-                print(f"⚠️ 坐标解析异常：{str(e)}")
+                print(f"[摄像头{camera_id}] ⚠️ 坐标解析异常：{str(e)}")
                 text_x1 = x1
                 text_y1 = y1
                 text_x2 = x2
@@ -4005,7 +4009,7 @@ def process_ship_ocr(frame, post_results, weather_label, camera_id):
                 "camera_id": camera_id
             })
         else:
-            print(f"ℹ️ 当前ROI无有效识别文字（经过过滤）")
+            print(f"[摄像头{camera_id}] ℹ️ 当前ROI无有效识别文字（经过过滤）")
     
     return ocr_results
 
@@ -4337,7 +4341,7 @@ class YOLOv11RKNN:
         return results
 
     # ============== 分类后处理（原版保持） ==============
-    def _postprocess_cls(self, outputs):
+    def _postprocess_cls(self, outputs, camera_id=None):
         probs = outputs[0]
         if probs.ndim == 2:
             probs = probs[0]
@@ -4352,17 +4356,17 @@ class YOLOv11RKNN:
             if night_prob > 0.3 and (top1_conf - night_prob) < 0.3:
                 top1_idx  = 2                 # 修正为 night
                 top1_conf = night_prob
-                print("———————————————————修复为night————————————————————")
+                print(f"[摄像头{camera_id}] ———————————————————修复为night————————————————————")
         return top1_idx, top1_conf
 
     # ============== 统一推理入口 ==============
-    def predict(self, frame):
+    def predict(self, frame, camera_id=None):
         shape = frame.shape[:2]
         if self.model_type == "cls":
             blob = self._preprocess_cls(frame)
             # 分类模型 NCHW 输入，不指定 data_format
             out = self.rknn.run([blob])
-            idx, conf = self._postprocess_cls(out)
+            idx, conf = self._postprocess_cls(out, camera_id=camera_id)
             return [_ClsResult(idx, conf, self.names)]
         else:
             blob, r, (dw, dh) = self._preprocess_det(frame)
@@ -4469,17 +4473,17 @@ def _select_detection_model(weather_cls):
     return det_day_model
 
 # ======================== 核心函数 ========================
-def get_weather_class(frame):
-    """场景分类：移除多余参数，仅传frame"""
+def get_weather_class(frame, camera_id):
+    """场景分类：摄像头编号仅用于日志来源标识。"""
     #cls_frame = cv2.resize(frame, (320, 320), interpolation=cv2.INTER_LINEAR)
-    results = cls_model.predict(frame)
+    results = cls_model.predict(frame, camera_id=camera_id)
     
     result = results[0]
     top1_idx = result.probs.top1
     top1_conf = result.probs.top1conf.item()
     cls_label = result.names.get(top1_idx, str(top1_idx))
     
-    print(f"分类结果：{cls_label} | 置信度：{top1_conf:.3f}")
+    print(f"[摄像头{camera_id}] 分类结果：{cls_label} | 置信度：{top1_conf:.3f}")
     return cls_label, top1_conf
 
 weather_cache = {}
@@ -4489,7 +4493,7 @@ def get_weather_class_cached(frame, camera_id, frame_idx):
     if cache is not None and frame_idx % CLS_INTERVAL != 0:
         return cache
 
-    result = get_weather_class(frame)
+    result = get_weather_class(frame, camera_id)
     weather_cache[camera_id] = result
     return result
 
@@ -4638,12 +4642,12 @@ def save_representative_frames(collector, raw_frame, draw_frame, trigger_cam_id,
     weather_path = os.path.join(send_dir, "weather.webp")
     _save_webp_image(raw_frame, weather_path)
     collector.set_weather_image(weather_path)
-    print(f"✅ 天气代表帧已保存: {weather_path}")
+    print(f"[摄像头{trigger_cam_id}] ✅ 天气代表帧已保存: {weather_path}")
 
     bbox_path = os.path.join(send_dir, "bbox_frame.webp")
     _save_webp_image(draw_frame, bbox_path)
     collector.set_bbox_image(bbox_path)
-    print(f"✅ 船体框代表帧已保存: {bbox_path}")
+    print(f"[摄像头{trigger_cam_id}] ✅ 船体框代表帧已保存: {bbox_path}")
 
 
 def check_work_mode(has_alarm):
@@ -5250,7 +5254,7 @@ def save_panorama(frame, camera_id, alarm=False):
                 invoke_stream_sender(send_path)
             return True
     except Exception as e:
-        print(f"⚠️ 全景图保存失败: {e}")
+        print(f"[摄像头{camera_id}] ⚠️ 全景图保存失败: {e}")
     return False
 
 
@@ -5639,7 +5643,7 @@ if __name__ == "__main__":
                 weather_conf=weather_conf,
             )
 
-            # AIS分级告警独立保留；只有最近的活动AIS告警目标<=50m才触发录像。
+            # AIS分级告警独立保留；只有最近的活动AIS告警目标<=200m才触发录像。
             ais_near_target = bool(
                 AIS_ENABLE and ais_has_alarm and ais_closest
                 and ais_closest.get('distance') is not None
@@ -5721,7 +5725,7 @@ if __name__ == "__main__":
                         use_night_detector=_use_night_detector(weather_label)
                     )
                     if image_distance is not None:
-                        print(f"📏 图像估算距离: {image_distance:.1f}m（框宽 {bx2 - bx1}px）")
+                        print(f"[摄像头{camera_id}] 📏 图像估算距离: {image_distance:.1f}m（框宽 {bx2 - bx1}px）")
 
                 # 保存图像估算距离（供 alarm.json 和 RS232 报文在 AIS 缺失时使用）
                 alarm_collector.image_distance = round(image_distance, 2) if image_distance is not None else None
@@ -5810,7 +5814,7 @@ if __name__ == "__main__":
                 if ALARM_ARCHIVE_ENABLE and AIS_ENABLE and AIS_TRAJECTORY_ENABLE:
                     track_hist = ais_state.get_track_history()
                     if track_hist:
-                        print("📊 保存告警时刻 AIS 轨迹图...")
+                        print(f"[摄像头{camera_id}] 📊 保存告警时刻 AIS 轨迹图...")
                         ais_trajectory_path = save_ais_trajectory_image(track_hist, output_dir=alarm_collector.send_dir)
                         if ais_trajectory_path:
                             fixed = os.path.join(alarm_collector.send_dir, 'ais_trajectory.webp')
@@ -5838,9 +5842,9 @@ if __name__ == "__main__":
                 alarm_collectors.pop(camera_id, None)
                 alarm_collector = None
                 if ALARM_ARCHIVE_ENABLE:
-                    print("✅ 告警事件归档完成")
+                    print(f"[摄像头{camera_id}] ✅ 告警事件归档完成")
                 else:
-                    print("✅ 告警视频处理完成（本地归档关闭）")
+                    print(f"[摄像头{camera_id}] ✅ 告警视频处理完成（本地归档关闭）")
 
             # 融合告警更新和归档完成后才检查工作期限。
             if not check_work_duration():
